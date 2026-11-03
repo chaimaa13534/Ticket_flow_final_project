@@ -1,0 +1,7 @@
+# Servie à l'application "ticket-service" uniquement.
+ticketflow:
+  ticket:
+    # Format du code de vérification : 12 caractères hexadécimaux (non prédictible)
+    code-length: 24
+    # Délai d'expiration d'un billet après la date de l'événement
+    expiry-after-event-days: 30

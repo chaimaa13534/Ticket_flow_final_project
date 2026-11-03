@@ -1,0 +1,11 @@
+# Servie à l'application "booking-service" uniquement.
+ticketflow:
+  booking:
+    hold-minutes: 15              # TTL d'une réservation PENDING
+    max-quantity-per-booking: 10 # FR-007 : limite par commande
+    cleanup-cron: "*/1 * * * *" # expiration périodique des PENDING échues
+  clients:
+    event-service:
+      url: ""  # vide = résolution Eureka (lb://event-service)
+    customer-service:
+      url: ""

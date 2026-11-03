@@ -1,0 +1,9 @@
+# Servie à l'application "payment-service" uniquement.
+ticketflow:
+  payment:
+    mode: simulated               # "simulated" (démo) ou "provider"
+    success-rate: 0.9             # 90 % de succès en mode simulé
+    # En mode "provider" : URL et credentials du prestataire (injectés au runtime)
+    provider-base-url: ""
+    # Délai d'attente maximal d'un webhook prestataire avant expiration
+    webhook-timeout-minutes: 30

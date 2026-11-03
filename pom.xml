@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Hérite du parent Spring Boot : versions gérées, plugins configurés (jar repackage, etc.) -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.8</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.ticketflow</groupId>
+    <artifactId>ticketflow-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>TicketFlow</name>
+    <description>Plateforme de billetterie microservices — adaptation conforme au cahier des charges</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <spring-cloud.version>2025.1.2</spring-cloud.version>
+        <testcontainers.version>1.20.4</testcontainers.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <lombok.version>1.18.36</lombok.version>
+    </properties>
+
+    <modules>
+        <!-- Services transverses -->
+        <module>services/config-server</module>
+        <module>services/discovery-server</module>
+        <module>services/api-gateway</module>
+        <!-- Services métier -->
+        <module>services/customer-service</module>
+        <module>services/event-service</module>
+        <module>services/booking-service</module>
+        <module>services/payment-service</module>
+        <module>services/ticket-service</module>
+        <module>services/notification-service</module>
+        <!-- Services agentiques -->
+        <module>services/ai-assistant-service</module>
+        <module>services/mcp-tool-server</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOM Spring Cloud : versions compatibles entre starters Eureka, Gateway, OpenFeign, Config -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- BOM Testcontainers : versions alignées pour Postgres, Kafka, Keycloak -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

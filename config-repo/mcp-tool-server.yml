@@ -1,0 +1,18 @@
+# Servie à l'application "mcp-tool-server" uniquement.
+ticketflow:
+  mcp:
+    tools:
+      max-results: 20
+      allowlist:
+        - name: search_public_events
+          version: "1.0"
+          description: Recherche paginée d'événements publics
+        - name: get_public_event
+          version: "1.0"
+          description: Détail public d'un événement publié
+        - name: get_my_bookings
+          version: "1.0"
+          description: Réservations de l'utilisateur authentifié
+        - name: get_booking_status
+          version: "1.0"
+          description: Statut d'une réservation (vérification propriétaire côté API)

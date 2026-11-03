@@ -1,0 +1,60 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: customer-service
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+  datasource:
+    # Une base PAR service, conformément au CdC §7.1 : pas de jointure inter-bases.
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/ticketflow_customer
+    username: ${POSTGRES_USER:ticketflow}
+    password: ${POSTGRES_PASSWORD:ticketflow}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Flyway gère le schéma ; ddl-auto=validate vérifie la cohérence
+    properties:
+      hibernate.jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER:http://localhost:9090/realms/ticketflow}
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:9090}/realms/ticketflow/protocol/openid-connect/certs
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      client-id: customer-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true

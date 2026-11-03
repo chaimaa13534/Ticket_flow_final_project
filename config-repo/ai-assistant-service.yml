@@ -1,0 +1,22 @@
+# Servie à l'application "ai-assistant-service" uniquement.
+# AUCUN secret ici : TELEGRAM_BOT_TOKEN, LLM_API_KEY et MCP_SERVER_TOKEN sont injectés au runtime.
+ticketflow:
+  assistant:
+    telegram:
+      max-message-length: 4000   # Telegram limite à 4096 ; on garde une marge
+      allowed-updates:
+        - message
+        - callback_query
+    llm:
+      timeout-seconds: 30
+      max-tokens: 1500
+      temperature: 0.3            # factuel, peu créatif (assistant transactionnel)
+    context:
+      ttl-minutes: 30             # mémoire conversationnelle à durée limitée
+      max-history: 10
+    # Limites d'action agentique (FR-018) : interdiction de confirmations automatisées
+    forbidden-actions:
+      - confirm_booking
+      - process_payment
+      - cancel_booking
+      - refund

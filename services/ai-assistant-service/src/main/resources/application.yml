@@ -1,0 +1,72 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: ai-assistant-service
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/ticketflow_assistant
+    username: ${POSTGRES_USER:ticketflow}
+    password: ${POSTGRES_PASSWORD:ticketflow}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER:http://localhost:9090/realms/ticketflow}
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:9090}/realms/ticketflow/protocol/openid-connect/certs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      mcp-tool-server:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60s
+      llm-provider:
+        register-health-indicator: true
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 60s
+
+ticketflow:
+  assistant:
+    telegram:
+      bot-token: ${TELEGRAM_BOT_TOKEN:replace_me}
+      webhook-secret: ${TELEGRAM_WEBHOOK_SECRET:replace_me}
+      max-message-length: 4000  # Telegram limite à 4096 caractères
+    llm:
+      provider: ${LLM_PROVIDER:openai}        # openai | anthropic | zai
+      api-key: ${LLM_API_KEY:replace_me}
+      model: ${LLM_MODEL:gpt-4o-mini}
+      base-url: ${LLM_BASE_URL:https://api.openai.com/v1}
+      timeout-seconds: 30
+      max-tokens: 1500
+    mcp:
+      base-url: http://mcp-tool-server:8088
+      auth-token: ${MCP_SERVER_TOKEN:replace_me}
+    context:
+      ttl-minutes: 30              # TTL de la mémoire conversationnelle
+      max-history: 10             # nombre maximum d'échanges conservés en mémoire

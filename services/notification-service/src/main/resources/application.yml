@@ -1,0 +1,66 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: notification-service
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/ticketflow_notification
+    username: ${POSTGRES_USER:ticketflow}
+    password: ${POSTGRES_PASSWORD:ticketflow}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER:http://localhost:9090/realms/ticketflow}
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:9090}/realms/ticketflow/protocol/openid-connect/certs
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: notification-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.ticketflow.*"
+      # Pas d'auto-offset-reset "earliest" : on démarre toujours au plus récent pour éviter
+      # de renvoyer toutes les anciennes notifications au redémarrage.
+      auto-offset-reset: latest
+    listener:
+      ack-mode: record  # ack après traitement de chaque message (idempotence contrôlée)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+ticketflow:
+  notification:
+    mail:
+      # En démo : SMTP mocké (logs). En production : paramètres SMTP réels.
+      enabled: false
+      from: "no-reply@ticketflow.local"
+      host: ${MAIL_HOST:localhost}
+      port: ${MAIL_PORT:1025}
+    retry:
+      max-attempts: 3
+      backoff-ms: 5000  # délai initial, multiplié par 2 à chaque tentative

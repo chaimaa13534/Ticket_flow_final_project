@@ -1,0 +1,15 @@
+# Servie à l'application "notification-service" uniquement.
+ticketflow:
+  notification:
+    mail:
+      enabled: false              # SMTP mocké en démo (logs uniquement)
+      from: "no-reply@ticketflow.local"
+      host: ${MAIL_HOST:localhost}
+      port: ${MAIL_PORT:1025}
+    retry:
+      max-attempts: 3
+      backoff-ms: 5000
+    # Préférences par défaut (FR-014) : respect des désabonnements
+    default-preferences:
+      email-enabled: true
+      telegram-enabled: false

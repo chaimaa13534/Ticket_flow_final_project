@@ -1,0 +1,59 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: mcp-tool-server
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      event-service:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+      booking-service:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+
+ticketflow:
+  mcp:
+    # Token d'authentification service-à-service : partagé avec ai-assistant-service.
+    # Le LLM n'a pas ce token : il ne peut pas appeler MCP directement.
+    server-token: ${MCP_SERVER_TOKEN:replace_me}
+    tools:
+      # Allowlist versionnée — chaque outil a un nom, une version, un schéma d'entrée JSON.
+      allowlist:
+        - name: search_public_events
+          version: "1.0"
+          description: Recherche paginée d'événements publics
+        - name: get_public_event
+          version: "1.0"
+          description: Détail public d'un événement publié
+        - name: get_my_bookings
+          version: "1.0"
+          description: Réservations de l'utilisateur authentifié (après liaison Telegram)
+        - name: get_booking_status
+          version: "1.0"
+          description: Statut d'une réservation (vérification propriétaire côté API)
+      max-results: 20
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,metrics
+  endpoint:
+    health:
+      show-details: always

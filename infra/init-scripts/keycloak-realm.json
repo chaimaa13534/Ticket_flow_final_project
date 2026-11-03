@@ -1,0 +1,177 @@
+{
+  "realm": "ticketflow",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "ROLE_CLIENT",
+        "description": "Client authentifié : réservation, paiement, consultation de ses billets",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "ROLE_ORGANIZER",
+        "description": "Organisateur : CRUD de ses événements, publication",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "ROLE_ADMIN",
+        "description": "Administrateur plateforme : rôles, paramètres, audit",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "ROLE_VISITOR",
+        "description": "Visiteur : accès lecture publique par défaut",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "clients",
+      "path": "/clients"
+    },
+    {
+      "name": "organizers",
+      "path": "/organizers"
+    },
+    {
+      "name": "admins",
+      "path": "/admins"
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "ticketflow-web",
+      "name": "TicketFlow Web Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://localhost:8080"
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ]
+    },
+    {
+      "clientId": "ticketflow-api",
+      "name": "TicketFlow API Gateway",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "secret": "ticketflow-api-secret-dev-only"
+    }
+  ],
+  "users": [
+    {
+      "username": "demo-client",
+      "email": "client@ticketflow.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Client",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ROLE_CLIENT",
+        "ROLE_VISITOR"
+      ],
+      "groups": [
+        "/clients"
+      ]
+    },
+    {
+      "username": "demo-organizer",
+      "email": "organizer@ticketflow.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Organizer",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ROLE_ORGANIZER",
+        "ROLE_VISITOR"
+      ],
+      "groups": [
+        "/organizers"
+      ]
+    },
+    {
+      "username": "demo-admin",
+      "email": "admin@ticketflow.local",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ROLE_ADMIN",
+        "ROLE_VISITOR"
+      ],
+      "groups": [
+        "/admins"
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "roles",
+      "description": "Inclut les rôles realm dans le token",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "claim.name": "realm_access.roles",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ]
+}

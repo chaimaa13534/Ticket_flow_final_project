@@ -1,0 +1,24 @@
+# ============================================================================
+# Configuration commune à TOUS les services
+# Servie par le Config Server via GET /application/default
+# RÈGLE : aucune donnée secrète ici. Les secrets sont injectés au runtime.
+# ============================================================================
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # "refresh" : permet de recharger la config sans redémarrer
+        #   curl -X POST http://localhost:8081/actuator/refresh
+        include: health,info,refresh,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.ticketflow: INFO
+    org.springframework.cloud: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

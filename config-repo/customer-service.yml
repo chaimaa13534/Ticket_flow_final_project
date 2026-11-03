@@ -1,0 +1,11 @@
+# Servie à l'application "customer-service" uniquement.
+# Surcharges spécifiques au domaine customer (limites, paramètres métier).
+ticketflow:
+  customer:
+    # Politique de liaison Telegram (FR-017)
+    telegram-link:
+      code-length: 8
+      ttl-minutes: 10
+      max-attempts: 3
+    # Rétention des données après fermeture de compte (FR-005)
+    retention-days-after-closure: 30

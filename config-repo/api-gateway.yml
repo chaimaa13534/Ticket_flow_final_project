@@ -1,0 +1,7 @@
+# Servie à l'application nommée "api-gateway" uniquement.
+# Surcharge application.yml pour exposer le endpoint gateway/routes.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,refresh

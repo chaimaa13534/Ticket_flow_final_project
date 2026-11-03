@@ -1,0 +1,97 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: booking-service
+
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/ticketflow_booking
+    username: ${POSTGRES_USER:ticketflow}
+    password: ${POSTGRES_PASSWORD:ticketflow}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER:http://localhost:9090/realms/ticketflow}
+          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:9090}/realms/ticketflow/protocol/openid-connect/certs
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      client-id: booking-service
+    consumer:
+      group-id: booking-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.ticketflow.*"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+# Resilience4J : protège les appels OpenFeign vers event-service et customer-service.
+resilience4j:
+  circuitbreaker:
+    instances:
+      event-service:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 50
+        slow-call-duration-threshold: 2s
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
+  retry:
+    instances:
+      event-service:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+          - feign.FeignException.ServiceUnavailable
+          - feign.FeignException.GatewayTimeout
+  timelimiter:
+    instances:
+      event-service:
+        timeout-duration: 3s
+
+# Paramètres métier du booking
+ticketflow:
+  booking:
+    hold-minutes: 15              # TTL d'une réservation PENDING
+    max-quantity-per-booking: 10  # limite par commande (FR-007)
+    cleanup-cron: "*/1 * * * *"   # expiration périodique des PENDING échues
+  clients:
+    event-service:
+      url: ""  # vide = résolution via Eureka (lb://event-service)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,metrics,circuitbreakers
+  endpoint:
+    health:
+      show-details: always

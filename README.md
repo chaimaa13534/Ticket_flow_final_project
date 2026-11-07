@@ -235,14 +235,14 @@ grant_type=password&client_id=ticketflow-web&username=demo-client&password=demo1
 
 ## Étapes du projet
 
-- ✅ **Étape 0** — Analyse et plan d'adaptation
-- ✅ **Étape 1** — Initialisation du projet (ce dépôt)
-- ⏳ **Étape 2** — Bases de données : entités JPA, enums, migrations Flyway
-- ⏳ **Étape 3a** — API REST des services existants (Customer, Event, Booking)
-- ⏳ **Étape 3b** — API REST des nouveaux services (Payment, Ticket, Notification, AI, MCP)
-- ⏳ **Étape 4** — Sécurité : Keycloak, JWT, rôles, filtres Spring Security
-- ⏳ **Étape 5** — Communication inter-services : OpenFeign + Resilience4J + Kafka
-- ⏳ **Étape 6** — API Gateway : routes, validation JWT, CORS, rate limiting
-- ⏳ **Étape 7** — Docker : Dockerfiles, docker-compose, healthchecks
-- ⏳ **Étape 8** — Tests : unitaires, intégration, checklist démo
-- ⏳ **Étape 9** — Documentation finale : README, diagrammes, justifications
+- **Étape 0** — Analyse et plan d'adaptation
+- **Étape 1** — Initialisation du projet (ce dépôt)
+- **Étape 2** — Bases de données : entités JPA, enums, migrations Flyway
+- **Étape 3a** — API REST des services existants (Customer, Event, Booking)
+- **Étape 3b** — API REST des nouveaux services (Payment, Ticket, Notification, AI, MCP)
+- **Étape 4** — Sécurité : Keycloak, JWT, rôles, filtres Spring Security
+- **Étape 5** — Communication inter-services : OpenFeign + Resilience4J + Kafka
+- **Étape 6** — API Gateway : routes, validation JWT, CORS, rate limiting
+- **Étape 7** — Docker : Dockerfiles, docker-compose, healthchecks
+- **Étape 8** — Tests : unitaires, intégration, checklist démo
+- **Étape 9** — Documentation finale : README, diagrammes, justifications

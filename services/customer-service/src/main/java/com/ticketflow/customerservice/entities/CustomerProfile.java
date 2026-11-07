@@ -1,13 +1,7 @@
 package com.ticketflow.customerservice.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.Instant;
 
 /**
@@ -28,6 +22,7 @@ public class CustomerProfile {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "id") // Dit à Hibernate que la FK est la PK (colonne "id")
     @MapsId  // id = customer.id automatiquement
     private Customer customer;
 

@@ -10,7 +10,7 @@ spring:
 
   datasource:
     # Une base PAR service, conformément au CdC §7.1 : pas de jointure inter-bases.
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/ticketflow_customer
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5433}/ticketflow_customer
     username: ${POSTGRES_USER:ticketflow}
     password: ${POSTGRES_PASSWORD:ticketflow}
     hikari:
